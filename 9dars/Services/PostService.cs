@@ -1,5 +1,4 @@
 ﻿using _9_dars.Api.Models;
-using System.Reflection;
 
 namespace _9_dars.Api.Services;
 
@@ -12,6 +11,7 @@ public class PostService
         posts = new List<Post>();
     }
 
+    
     public Post AddPost(Post post)
     {
         post.Id = Guid.NewGuid();
@@ -24,7 +24,7 @@ public class PostService
     {
         foreach (var post in posts)
         {
-            if(post.Id == postId)
+            if (post.Id == postId)
             {
                 return post;
             }
@@ -98,16 +98,63 @@ public class PostService
 
     public Post GetMostCommentedPost()
     {
+        var responsePost = new Post();
+        foreach (var post in posts)
+        {
+            if (responsePost.Comments.Count < post.Comments.Count)
+            {
+                responsePost = post;
+            }
+        }
 
+        return responsePost;
     }
+
 
     public List<Post> GetPostsByComment(string comment)
     {
-        
-
-        return ;
+        var responsePost = new List<Post>();
+        foreach (var post in posts)
+        {
+            if (post.Comments.Contains(comment))
+            {
+                responsePost.Add(post);
+            }
+        }
+        return responsePost;
     }
-}
+
+    public bool AddCommentToPost(Guid postId, string comment)
+    {
+        var post = GetPostById(postId);
+        if (post is null)
+        {
+            return false;
+        }
+        post.Comments.Add(comment);
+        return true;
+    }
+    public bool AddViewersToPost(Guid postId, string viewerName)
+    {
+        var post = GetPostById(postId);
+        if (post is null)
+        {
+            return false;
+
+        }
+        post.ViewerNames.Add(viewerName);
+        return true;
+    }
+    public bool AddLikeToPost(Guid postId, string like)
+    {
+        var post = GetPostById(postId);
+        if (post is null)
+        {
+            return false;
+        }
+        post.QuantityLikes++;
+        return true;
+    }
 }
 
 
